@@ -1,6 +1,6 @@
 # NNTags
 
-An easy way to view and delete the records.
+An easy way to view, associate and disassociate records.
 
 ![alt text](https://github.com/VinnyDyn/NNTags/blob/master/pcf_nn_tags.gif)
 
