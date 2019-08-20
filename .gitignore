@@ -1,0 +1,12 @@
+# dependencies
+/node_modules
+
+# generated directory
+**/generated
+
+# output directory
+/out
+
+# solution directory
+Solution/bin
+Solution/obj
