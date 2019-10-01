@@ -1,16 +1,18 @@
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 import DataSetInterfaces = ComponentFramework.PropertyHelper.DataSetApi;
+import { string } from "prop-types";
 type DataSet = ComponentFramework.PropertyTypes.DataSet;
 
 export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
+	private _filter: HTMLInputElement;
 	private _container: HTMLDivElement;
 	private _entityLogicalName : string;
 	private _entityId : string;
 	private _relationShipName : string;
 	private _relatedEntityLogicalName : string;
 	private _associatedHex : string;
-
+	
 	constructor()
 	{
 	}
@@ -37,10 +39,76 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 		//Background Colors
 		this._associatedHex = context.parameters.associated_hex.raw;
 
+		//Filter
+		this._filter = document.createElement("input");
+		this._filter.setAttribute("type", "text");
+		this._filter.style.width = "95%";
+		this._filter.addEventListener("keyup", this.FilterTags.bind(this));
+		container.append(this._filter);
+
 		//Main div
 		this._container = document.createElement("div");
 		this._container.setAttribute("class", "Container");
 		container.append(this._container);
+	}
+
+	/**
+	 * Filter Tags
+	 */
+	private FilterTags() : void
+	{
+		let values = document.getElementsByTagName("p");
+		let matchTags : HTMLButtonElement[] = new Array();
+		let unmatchTags : HTMLButtonElement[] = new Array();
+
+		for (let index = 0; index < values.length; index++) {
+			const element = values[index];
+			let p = element as HTMLParagraphElement;
+
+			let contains : number = p.textContent!.toUpperCase().indexOf(this._filter.value.toUpperCase());
+			let parent = p.parentElement as HTMLButtonElement;
+
+			if(this._filter.value != "")
+			{
+				if(parent != null && parent.tagName == "BUTTON" && parent.className == "Unassociated")
+				{
+					if(contains > -1)
+					{
+						matchTags.push(parent);
+					}
+					else if(matchTags.filter(function (button) { return button.id == parent.id;}).length == 0)
+					{
+						unmatchTags.push(parent);
+					}
+				}
+			}
+			else
+			matchTags.push(parent);
+		}
+
+		for (let index = 0; index < matchTags.length; index++) {
+			const element = matchTags[index] as HTMLButtonElement;
+			let parent = element.parentElement as HTMLDivElement;
+			parent.append(element);	
+			this.VisibleTag(element);
+		}
+
+		for (let index = 0; index < unmatchTags.length; index++) {
+			const element = unmatchTags[index] as HTMLButtonElement;
+			let parent = element.parentElement as HTMLDivElement;
+			parent.append(element);	
+			this.CollapseTag(element);
+		}
+	}
+
+	public CollapseTag(tagButton : HTMLButtonElement)
+	{
+		tagButton.style.visibility = "collapse";
+	}
+
+	public VisibleTag(tagButton : HTMLButtonElement)
+	{
+		tagButton.style.visibility = "visible";
 	}
 
 	/**
