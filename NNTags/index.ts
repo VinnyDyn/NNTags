@@ -1,6 +1,7 @@
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 import DataSetInterfaces = ComponentFramework.PropertyHelper.DataSetApi;
 import { string } from "prop-types";
+import { Helper } from "./Helper";
 type DataSet = ComponentFramework.PropertyTypes.DataSet;
 
 export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutputs> {
@@ -237,10 +238,10 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	public AssociateRequest(caller : NNTags, button : HTMLButtonElement) : void
 	{
 		var association = {
-			"@odata.id": Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._relatedEntityLogicalName + "s(" + button.id + ")"
+			"@odata.id": Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + Helper.CorrectEntityLogicalName(this._relatedEntityLogicalName) + "(" + button.id + ")"
 		};
 		var req = new XMLHttpRequest();
-		req.open("POST", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._entityLogicalName + "s(" + this._entityId + ")/"+ this._relationShipName +"/$ref", true);
+		req.open("POST", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + Helper.CorrectEntityLogicalName(this._entityLogicalName) + "(" + this._entityId + ")/"+ this._relationShipName +"/$ref", true);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -268,7 +269,7 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	public DisassociateRequest(caller : NNTags, button : HTMLButtonElement) : void
 	{
 		var req = new XMLHttpRequest();
-		req.open("DELETE", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._entityLogicalName + "s(" + this._entityId + ")/"+this._relationShipName+"("+button.id+")/$ref", true);
+		req.open("DELETE", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + Helper.CorrectEntityLogicalName(this._entityLogicalName) + "(" + this._entityId + ")/"+this._relationShipName+"("+button.id+")/$ref", true);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -280,8 +281,8 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 					caller.RecordDisassociated(button);
 					button.setAttribute("clicked", false.toString());
 				} else {
-					Xrm.Utility.alertDialog(this.statusText, function(){});
 					button.setAttribute("clicked", false.toString());
+					Xrm.Utility.alertDialog(this.statusText, function(){});
 				}
 			}
 		};
