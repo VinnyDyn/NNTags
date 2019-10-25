@@ -1,7 +1,6 @@
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 import DataSetInterfaces = ComponentFramework.PropertyHelper.DataSetApi;
 import { string } from "prop-types";
-import { Helper } from "./Helper";
 type DataSet = ComponentFramework.PropertyTypes.DataSet;
 
 export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutputs> {
@@ -9,9 +8,11 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	private _filter: HTMLInputElement;
 	private _container: HTMLDivElement;
 	private _entityLogicalName : string;
+	private _entitySetName : string;
 	private _entityId : string;
 	private _relationShipName : string;
 	private _relatedEntityLogicalName : string;
+	private _relatedEntitySetName : string;
 	private _associatedHex : string;
 	
 	constructor()
@@ -33,9 +34,11 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 		
 		//Core
 		this._entityLogicalName = Xrm.Page.data.entity.getEntityName();
+		this._entitySetName = this.RetrieveEntityMetada(this._entityLogicalName);
 		this._entityId = Xrm.Page.data.entity.getId().replace("{","").replace("}","");
 		this._relationShipName = context.parameters.relationship_name.raw;
 		this._relatedEntityLogicalName = context.parameters.dataSet.getTargetEntityType();
+		this._relatedEntitySetName = this.RetrieveEntityMetada(this._relatedEntityLogicalName);
 
 		//Background Colors
 		this._associatedHex = context.parameters.associated_hex.raw;
@@ -238,10 +241,10 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	public AssociateRequest(caller : NNTags, button : HTMLButtonElement) : void
 	{
 		var association = {
-			"@odata.id": Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + Helper.CorrectEntityLogicalName(this._relatedEntityLogicalName) + "(" + button.id + ")"
+			"@odata.id": Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._relatedEntitySetName + "(" + button.id + ")"
 		};
 		var req = new XMLHttpRequest();
-		req.open("POST", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + Helper.CorrectEntityLogicalName(this._entityLogicalName) + "(" + this._entityId + ")/"+ this._relationShipName +"/$ref", true);
+		req.open("POST", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._entitySetName + "(" + this._entityId + ")/"+ this._relationShipName +"/$ref", true);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -269,7 +272,7 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	public DisassociateRequest(caller : NNTags, button : HTMLButtonElement) : void
 	{
 		var req = new XMLHttpRequest();
-		req.open("DELETE", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + Helper.CorrectEntityLogicalName(this._entityLogicalName) + "(" + this._entityId + ")/"+this._relationShipName+"("+button.id+")/$ref", true);
+		req.open("DELETE", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._entitySetName + "(" + this._entityId + ")/"+this._relationShipName+"("+button.id+")/$ref", true);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -304,6 +307,41 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 			Xrm.Utility.alertDialog(error.message, function () { });
 			return [];
 		});
+	}
+
+	/**
+	 * Retrieve EntitySetName
+	 * @param entityLogicalName 
+	 */
+	private RetrieveEntityMetada(entityLogicalName : string) : string
+	{
+		let entitySet : string;
+		entitySet = "";
+		let req = new XMLHttpRequest();
+    	req.open("GET", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + "EntityDefinitions(LogicalName='"+entityLogicalName+"')?$select=EntitySetName", false);
+		req.setRequestHeader("Accept", "application/json");
+		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+		req.setRequestHeader("OData-MaxVersion", "4.0");
+		req.setRequestHeader("OData-Version", "4.0");
+		req.onreadystatechange = function ()
+		{
+			if (this.readyState === 4)
+			{
+				req.onreadystatechange = null;
+				if (this.status === 200)
+				{
+					var result = JSON.parse(this.response);
+					entitySet = result.EntitySetName;
+				}
+				else
+				{
+					entitySet = "";
+				}
+			}
+		};
+		req.send();
+
+		return entitySet;
 	}
 
 	/**

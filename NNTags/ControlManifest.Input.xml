@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control preview-image="img/iconfinder_relationship_107192.png" namespace="VinnyBComponents" constructor="NNTags" version="1.1.0" display-name-key="EasyM2M for relationships" description-key="" control-type="standard">
+  <control preview-image="img/iconfinder_relationship_107192.png" namespace="VinnyBComponents" constructor="NNTags" version="1.1.1" display-name-key="EasyM2M for relationships" description-key="" control-type="standard">
     <data-set name="dataSet" display-name-key="Many to many dataset">
     </data-set>
     <property description-key="Many to Many Relationship Name" display-name-key="Many to Many Relationship Name" name="relationship_name" required="true" usage="input" of-type="SingleLine.Text"/>
