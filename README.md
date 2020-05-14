@@ -25,3 +25,6 @@ Add the component EasyM2M for relationships, here we need include two parameters
 - Associated Hexadecimal: define a button color when the record are related.
 
 ![alt text](https://github.com/VinnyDyn/NNTags/blob/master/pcf_configuration.png)
+
+### Developers
+After clone the repository, execute the command "npm install" to restore all packages.
