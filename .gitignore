@@ -7,10 +7,6 @@
 # output directory
 /out
 
-# solution directory
-Solution/bin
-Solution/obj
-
 # msbuild output directories
 /bin
 /obj

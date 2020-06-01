@@ -8,6 +8,12 @@ div.Container
     display: inline-block;
 }
 
+input.Filter
+{
+    width: 75%;
+    margin: 10px;
+}
+
 button.Unassociated
 {
     width: auto;
