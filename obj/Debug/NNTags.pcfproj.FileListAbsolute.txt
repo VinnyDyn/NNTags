@@ -1,2 +1,4 @@
 D:\Git\PowerApps\NNTags\obj\Debug\NNTags.pcfprojAssemblyReference.cache
 D:\Git\PowerApps\NNTags\obj\Debug\NNTags.pcfproj.CoreCompileInputs.cache
+C:\Git\NNTags\obj\Debug\NNTags.pcfprojAssemblyReference.cache
+C:\Git\NNTags\obj\Debug\NNTags.pcfproj.CoreCompileInputs.cache
