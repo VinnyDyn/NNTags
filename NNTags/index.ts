@@ -47,7 +47,7 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 
 		//Event
 		this._filter.disabled = false;
-		this._filter.addEventListener("keyup", this.FilterTags.bind(this));
+		this._filter.addEventListener("click", this.FilterTags.bind(this));
 
 		//Properties
 		this._entityLogicalName = Xrm.Page.data.entity.getEntityName();
@@ -168,7 +168,11 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 				buttonRecord.setAttribute("clicked", false.toString());
 				buttonRecord.setAttribute("class", "Unassociated");
 				buttonRecord.id = recordId.toString();
-				buttonRecord.addEventListener("click", this.ExecuteRequest.bind(this, self, buttonRecord));
+
+				if (!context.mode.isControlDisabled)
+					buttonRecord.addEventListener("click", this.ExecuteRequest.bind(this, self, buttonRecord));
+				else if (context.mode.isControlDisabled && context.parameters.disable_subgrid.raw! == "1")
+					buttonRecord.addEventListener("click", this.ExecuteRequest.bind(this, self, buttonRecord));
 
 				//Columns in view / value
 				columns.forEach(function (column, index) {

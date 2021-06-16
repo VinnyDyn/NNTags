@@ -5,6 +5,10 @@
     </data-set>
     <property description-key="Many to Many Relationship Name" display-name-key="Many to Many Relationship Name" name="relationship_name" required="true" usage="input" of-type="SingleLine.Text"/>
     <property description-key="#000000" display-name-key="Associated Hexadecimal" name="associated_hex" required="true" usage="input" of-type="SingleLine.Text"/>
+    <property description-key="Disable Sub-grid With by the Record" display-name-key="Disable Sub-grid With by the Record" name="disable_subgrid" required="true" usage="input" of-type="Enum">
+      <value name="Yes" display-name-key="Yes">0</value>
+      <value name="No" display-name-key="No">1</value>
+      </property>
     <resources>
       <code path="index.ts" order="1"/>
       <css path="css/NNTags.css" order="1" />
