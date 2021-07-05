@@ -21,7 +21,7 @@ The quantity of records is directly associated to parameter **Number of Rows**.
 
 ### Controls
 Add the component EasyM2M for relationships, here we need include two parameters.
-- Many-to-Many Relationship: Many-to-Many LogicalName.
+- Many-to-Many Relationship: Many-to-Many LogicalName. [IMPORTANT: How to configure the Many-to-Many Relationship](https://github.com/VinnyDyn/NNTags/issues/10#issuecomment-874050904)
 - Associated Hexadecimal: define a button color when the record are related.
 
 ![alt text](https://github.com/VinnyDyn/NNTags/blob/master/Images/pcf_configuration.png)
