@@ -5,6 +5,7 @@ type DataSet = ComponentFramework.PropertyTypes.DataSet;
 
 export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
+	private _context: ComponentFramework.Context<IInputs>
 	private _filter: HTMLInputElement;
 	private _container: HTMLDivElement;
 	private _entityLogicalName: string;
@@ -27,38 +28,49 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	 * @param container If a control is marked control-type='starndard', it will receive an empty div element within which it can render its content.
 	 */
 	public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container: HTMLDivElement) {
+
+		this._context = context;
+
 		//Filter
-		this._filter = document.createElement("input");
-		this._filter.setAttribute("type", "text");
-		this._filter.setAttribute("class", "Filter");
-		this._filter.disabled = true;
-		container.append(this._filter);
+		this.RenderSearchBox(container);
+
 		//Main div
 		this._container = document.createElement("div");
 		this._container.setAttribute("class", "Container");
 		container.append(this._container);
 	}
 
+	private RenderSearchBox(container: HTMLDivElement) {
+		var disableSearchBox: string = this._context.parameters.disable_searchbox.raw != null ? this._context.parameters.disable_searchbox.raw : "1";
+		this._filter = document.createElement("input");
+		if (disableSearchBox == "0") {
+			this._filter.setAttribute("type", "text");
+			this._filter.setAttribute("class", "Filter");
+			this._filter.disabled = true;
+			container.append(this._filter);
+		}
+	}
+
 	/**
 	 * Principal properties
 	 * @param context Context
 	 */
-	private MainProperties(context: ComponentFramework.Context<IInputs>) {
+	private MainProperties() {
 
 		//Event
 		this._filter.disabled = false;
 		this._filter.addEventListener("click", this.FilterTags.bind(this));
 
 		//Properties
-		this._entityLogicalName = Xrm.Page.data.entity.getEntityName();
+		this._entityLogicalName = (this._context as any).page.entityTypeName;
 		this._entitySetName = this.RetrieveEntityMetada(this._entityLogicalName);
-		this._entityId = Xrm.Page.data.entity.getId().replace("{", "").replace("}", "");
-		this._relationShipName = context.parameters.relationship_name.raw;
-		this._relatedEntityLogicalName = context.parameters.dataSet.getTargetEntityType();
+		this._entityId = (this._context as any).page.entityId.replace("{", "").replace("}", "");
+		this._relationShipName = this._context.parameters.relationship_name.raw!;
+		this._relatedEntityLogicalName = this._context.parameters.dataSet.getTargetEntityType();
 		this._relatedEntitySetName = this.RetrieveEntityMetada(this._relatedEntityLogicalName);
 
 		//Background Colors
-		this._associatedHex = context.parameters.associated_hex.raw;
+		this._associatedHex = this._context.parameters.associated_hex.raw!;
 	}
 
 	/**
@@ -118,10 +130,13 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	 * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
 	 */
 	public updateView(context: ComponentFramework.Context<IInputs>): void {
-		if (Xrm.Page.ui.getFormType() == XrmEnum.FormType.Create)
+
+		this._context = context;
+
+		if (this._context.mode.isControlDisabled)
 			return;
 		else
-			this.MainProperties(context);
+			this.MainProperties();
 
 		//If the view is loaded
 		if (!context.parameters.dataSet.loading) {
@@ -155,6 +170,9 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	 * @param columns 
 	 */
 	public CreateButtonTag(context: ComponentFramework.Context<IInputs>, columns: DataSetInterfaces.Column[]) {
+
+		var disableClick: string = context.parameters.disable_subgrid.raw != null ? context.parameters.disable_subgrid.raw! : "1";
+
 		if (context.parameters.dataSet.sortedRecordIds.length > 0) {
 			//Record
 			for (let recordId of context.parameters.dataSet.sortedRecordIds) {
@@ -169,9 +187,10 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 				buttonRecord.setAttribute("class", "Unassociated");
 				buttonRecord.id = recordId.toString();
 
+
 				if (!context.mode.isControlDisabled)
 					buttonRecord.addEventListener("click", this.ExecuteRequest.bind(this, self, buttonRecord));
-				else if (context.mode.isControlDisabled && context.parameters.disable_subgrid.raw! == "1")
+				else if (context.mode.isControlDisabled && disableClick == "1")
 					buttonRecord.addEventListener("click", this.ExecuteRequest.bind(this, self, buttonRecord));
 
 				//Columns in view / value
@@ -194,7 +213,7 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	private GetColumns(context: ComponentFramework.Context<IInputs>): DataSetInterfaces.Column[] {
 		//alert(context.parameters.dataSet.columns.length);
 		//No columns
-		if (!context.parameters.dataSet.columns && context.parameters.dataSet.columns!.length === 0) {
+		if (!context.parameters.dataSet.columns && (context.parameters.dataSet.columns as any).length === 0) {
 			return [];
 		}
 
@@ -237,10 +256,10 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	 */
 	public AssociateRequest(caller: NNTags, button: HTMLButtonElement): void {
 		var association = {
-			"@odata.id": Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._relatedEntitySetName + "(" + button.id + ")"
+			"@odata.id": (this._context as any).page.getClientUrl() + "/api/data/v9.1/" + this._relatedEntitySetName + "(" + button.id + ")"
 		};
 		var req = new XMLHttpRequest();
-		req.open("POST", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._entitySetName + "(" + this._entityId + ")/" + this._relationShipName + "/$ref", true);
+		req.open("POST", (this._context as any).page.getClientUrl() + "/api/data/v9.1/" + this._entitySetName + "(" + this._entityId + ")/" + this._relationShipName + "/$ref", true);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -252,7 +271,11 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 					caller.RecordAssociated(button);
 					button.setAttribute("clicked", false.toString());
 				} else {
-					Xrm.Utility.alertDialog(this.statusText, function () { });
+					Xrm.Navigation.openAlertDialog({
+						confirmButtonLabel: undefined,
+						text: this.statusText,
+						title: undefined
+					}, undefined);
 					button.setAttribute("clicked", false.toString());
 				}
 			}
@@ -267,7 +290,7 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 	 */
 	public DisassociateRequest(caller: NNTags, button: HTMLButtonElement): void {
 		var req = new XMLHttpRequest();
-		req.open("DELETE", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + this._entitySetName + "(" + this._entityId + ")/" + this._relationShipName + "(" + button.id + ")/$ref", true);
+		req.open("DELETE", (this._context as any).page.getClientUrl() + "/api/data/v9.1/" + this._entitySetName + "(" + this._entityId + ")/" + this._relationShipName + "(" + button.id + ")/$ref", true);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -280,7 +303,11 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 					button.setAttribute("clicked", false.toString());
 				} else {
 					button.setAttribute("clicked", false.toString());
-					Xrm.Utility.alertDialog(this.statusText, function () { });
+					Xrm.Navigation.openAlertDialog({
+						confirmButtonLabel: undefined,
+						text: this.statusText,
+						title: undefined
+					}, undefined);
 				}
 			}
 		};
@@ -299,7 +326,11 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 					self.RecordAssociated(buttonRecord as HTMLButtonElement);
 			}
 		}, function (error) {
-			Xrm.Utility.alertDialog(error.message, function () { });
+			Xrm.Navigation.openAlertDialog({
+				confirmButtonLabel: undefined,
+				text: error.message,
+				title: undefined
+			}, undefined);
 			return [];
 		});
 	}
@@ -312,7 +343,7 @@ export class NNTags implements ComponentFramework.StandardControl<IInputs, IOutp
 		let entitySet: string;
 		entitySet = "";
 		let req = new XMLHttpRequest();
-		req.open("GET", Xrm.Page.context.getClientUrl() + "/api/data/v9.1/" + "EntityDefinitions(LogicalName='" + entityLogicalName + "')?$select=EntitySetName", false);
+		req.open("GET", (this._context as any).page.getClientUrl() + "/api/data/v9.1/" + "EntityDefinitions(LogicalName='" + entityLogicalName + "')?$select=EntitySetName", false);
 		req.setRequestHeader("Accept", "application/json");
 		req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
 		req.setRequestHeader("OData-MaxVersion", "4.0");

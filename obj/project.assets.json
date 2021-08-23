@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.6.2": {
-      "Microsoft.PowerApps.MSBuild.Pcf/1.5.5": {
+      "Microsoft.PowerApps.MSBuild.Pcf/1.9.4": {
         "type": "package",
         "build": {
           "build/Microsoft.PowerApps.MSBuild.Pcf.props": {},
@@ -12,10 +12,10 @@
     }
   },
   "libraries": {
-    "Microsoft.PowerApps.MSBuild.Pcf/1.5.5": {
-      "sha512": "CImUwLfWTc2xoYnJeWLUni25Yo+JL1Nd/k4Lo0tOPTwK9Khbw2STgtHjPLChlMvUWDg3CrJJtA8WJa4/uY0JdA==",
+    "Microsoft.PowerApps.MSBuild.Pcf/1.9.4": {
+      "sha512": "KKhRhmKJGopxsTfysQzUCAmbnEQ+HIsk3IJsD4ENABdmdlz3oMBapiDOsc5BWS1IfwnHpFpAAsxwWh7gV3wcTQ==",
       "type": "package",
-      "path": "microsoft.powerapps.msbuild.pcf/1.5.5",
+      "path": "microsoft.powerapps.msbuild.pcf/1.9.4",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -23,7 +23,7 @@
         "LICENSE.txt",
         "build/Microsoft.PowerApps.MSBuild.Pcf.props",
         "build/Microsoft.PowerApps.MSBuild.Pcf.targets",
-        "microsoft.powerapps.msbuild.pcf.1.5.5.nupkg.sha512",
+        "microsoft.powerapps.msbuild.pcf.1.9.4.nupkg.sha512",
         "microsoft.powerapps.msbuild.pcf.nuspec"
       ]
     }
@@ -34,19 +34,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\vinicius.basile\\.nuget\\packages\\": {}
+    "C:\\Users\\vbasi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Git\\NNTags\\NNTags.pcfproj",
+      "projectUniqueName": "D:\\Git\\NNTags\\NNTags.pcfproj",
       "projectName": "NNTags",
-      "projectPath": "C:\\Git\\NNTags\\NNTags.pcfproj",
-      "packagesPath": "C:\\Users\\vinicius.basile\\.nuget\\packages\\",
-      "outputPath": "C:\\Git\\NNTags\\obj\\",
+      "projectPath": "D:\\Git\\NNTags\\NNTags.pcfproj",
+      "packagesPath": "C:\\Users\\vbasi\\.nuget\\packages\\",
+      "outputPath": "D:\\Git\\NNTags\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\vinicius.basile\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\vbasi\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

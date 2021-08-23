@@ -1,16 +1,19 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest>
   <control preview-image="img/iconfinder_relationship_107192.png" namespace="VinnyBComponents" constructor="NNTags" version="1.1.1" display-name-key="EasyM2M for relationships" description-key="" control-type="standard">
-    <data-set name="dataSet" display-name-key="Many to many dataset">
-    </data-set>
-    <property description-key="Many to Many Relationship Name" display-name-key="Many to Many Relationship Name" name="relationship_name" required="true" usage="input" of-type="SingleLine.Text"/>
-    <property description-key="#000000" display-name-key="Associated Hexadecimal" name="associated_hex" required="true" usage="input" of-type="SingleLine.Text"/>
-    <property description-key="Disable Sub-grid With by the Record" display-name-key="Disable Sub-grid With by the Record" name="disable_subgrid" required="true" usage="input" of-type="Enum">
+    <data-set name="dataSet" display-name-key="Many to many dataset"></data-set>
+    <property description-key="Many to Many Relationship Name" display-name-key="Many to Many Relationship Name" name="relationship_name" required="true" usage="input" of-type="SingleLine.Text" />
+    <property description-key="#000000" display-name-key="Associated Hexadecimal" name="associated_hex" required="true" usage="input" of-type="SingleLine.Text" />
+    <property description-key="Disable Sub-grid With by the Record" display-name-key="Disable Sub-grid With by the Record" name="disable_subgrid" required="false" usage="input" of-type="Enum">
       <value name="Yes" display-name-key="Yes">0</value>
       <value name="No" display-name-key="No">1</value>
-      </property>
+    </property>
+    <property description-key="Disable Search Box" display-name-key="Disable Search Box" name="disable_searchbox" required="false" usage="input" of-type="Enum">
+      <value name="Yes" display-name-key="Yes">0</value>
+      <value name="No" display-name-key="No">1</value>
+    </property> 
     <resources>
-      <code path="index.ts" order="1"/>
+      <code path="index.ts" order="1" />
       <css path="css/NNTags.css" order="1" />
     </resources>
   </control>
